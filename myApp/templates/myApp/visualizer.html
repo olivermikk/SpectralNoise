@@ -1,0 +1,138 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container content-wrapper mt-4">
+  <h1 class="text-center my-4">Visualizer</h1>
+  <p class="text-center mb-4"></p>
+
+  <div class="row g-0">
+    <!-- Left Column: Form + Extract Canvas (stacked) -->
+    <div class="col-md-5 d-flex flex-column p-2">
+      <!-- Form -->
+      <div class="bg-light p-3 mb-3">
+        <form method="POST" id="customization-form" onsubmit="handleSubmit(event)">
+          {% csrf_token %}
+          <div class="mb-3">
+              <label for="algorithm" class="form-label">Select Visual Generator</label>
+              <select name="algorithm" id="algorithm" class="form-control" onchange="updateVariations()">
+                  <option value=""></option>
+                  {% for algorithm in algorithms %}
+                      <option value="{{ algorithm.id }}">{{ algorithm.name }}</option>
+                  {% endfor %}
+              </select>
+          </div>
+          <div class="mb-3">
+              <label for="variation" class="form-label">Select Variation</label>
+              <select name="variation" id="variation" class="form-control" required>
+                  <option value=""></option>
+              </select>
+          </div>
+          <button type="submit" class="btn btn-primary w-100">Apply Customization</button>
+        </form>
+      </div>
+
+      <!-- Extract Canvas -->
+      <div id="canvas" class="border flex-grow-1" style="min-height: 500px; background-color:#f4f4f4; position:relative;">
+        <!-- Audio controls and info will appear here -->
+      </div>
+    </div>
+
+    <!-- Right Column: Visual Canvas -->
+    <div class="col-md-7 p-2">
+      <div id="visualCanvasContainer" class="border w-100 h-100" style="min-height: 800px; background-color:#f4f4f4; position:relative;">
+        <!-- Placeholder for visualizer canvas -->
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Update variation options when algorithm changes
+  function updateVariations() {
+    const algorithmId = document.getElementById("algorithm").value;
+    const variationDropdown = document.getElementById("variation");
+
+    variationDropdown.innerHTML = '<option value="">Loading variations...</option>';
+
+    if (!algorithmId) {
+      variationDropdown.innerHTML = '<option value="">--Select Algorithm First--</option>';
+      return;
+    }
+
+    fetch("{% url 'get_variations_by_algorithm' %}?algorithm_id=" + algorithmId, {
+      method: "GET",
+      headers: {
+        'Content-Type': 'application/json',
+        'X-Requested-With': 'XMLHttpRequest'
+      }
+    })
+    .then(response => response.json())
+    .then(data => {
+      variationDropdown.innerHTML = '';
+      if (data.variations.length === 0) {
+        variationDropdown.innerHTML = '<option value="">No variations available</option>';
+      } else {
+        data.variations.forEach(function(variation) {
+          const option = document.createElement("option");
+          option.value = variation.id;
+          option.textContent = `${variation.name} - ${variation.priority_type} - ${variation.file}`;
+          variationDropdown.appendChild(option);
+        });
+      }
+    })
+    .catch(error => {
+      console.error('Error fetching variations:', error);
+      variationDropdown.innerHTML = '<option value="">Error loading variations</option>';
+    });
+  }
+
+  // Handle form submit to load new visualizer script
+  function handleSubmit(event) {
+    event.preventDefault();
+
+    const algorithmId = document.getElementById("algorithm").value;
+    const variationId = document.getElementById("variation").value;
+
+    if (!algorithmId || !variationId) {
+      alert("Please select both an algorithm and a variation.");
+      return;
+    }
+
+    fetch(`/get_visualizer_script/${variationId}/`)
+      .then(response => response.json())
+      .then(data => {
+        if (data.script_url) {
+          const oldScript = document.getElementById('visualizer-script');
+          if (oldScript) oldScript.remove();
+
+          const oldCanvas = document.getElementById('visualCanvas');
+          if (oldCanvas) oldCanvas.remove();
+
+          const container = document.getElementById('visualCanvasContainer');
+          if (!container) return console.error('Error: visualCanvasContainer not found.');
+
+          const newCanvas = document.createElement('div');
+          newCanvas.id = 'visualCanvas';
+          newCanvas.classList.add('border', 'w-100', 'h-100');
+          newCanvas.style.backgroundColor = '#ffffff';
+          newCanvas.style.position = 'relative';
+          container.appendChild(newCanvas);
+
+          const script = document.createElement('script');
+          script.src = data.script_url;
+          script.type = 'text/javascript';
+          script.id = 'visualizer-script';
+          document.body.appendChild(script);
+        } else {
+          console.error('Error: Visualizer script not found.');
+        }
+      })
+      .catch(error => console.error('Error loading visualizer script:', error));
+  }
+</script>
+
+<!-- Load default audio extraction script -->
+<script src="{% static 'js/extractVals.js' %}"></script>
+
+{% endblock %}

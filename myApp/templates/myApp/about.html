@@ -1,0 +1,74 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<div class="container content-wrapper mt-4">
+
+    <h1>About</h1>
+
+    <!-- Flex container for text and image -->
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-start mt-4 gap-4">
+
+        <!-- Text Section on left side -->
+        <div class="flex-fill">
+            <p>
+                What happens when technology is encounters sound?
+            </p>
+            <p>
+                Spectral Noise is a creative exploration by Oliver Mikk into the space where audio meets visuals.
+                It's a browser-based tool designed to reimagine how we experience sound — not just through hearing, but through seeing.
+            </p>
+            <p>
+                Whether you're a musician looking for new inspiration, a visual artist curious about sonic forms, or simply someone
+                fascinated by the relationship between sound and image — this is a space for experimentation and discovery.
+            </p>
+            <p>
+                At its core, Spectral Noise takes audio input — from a microphone or an uploaded file — and transforms it into a live,
+                evolving visual experience. It analyzes the sound in real time, extracting elements like amplitude, frequency,
+                and spectrum, and turns them into generative drawings that develop as the music unfolds.
+
+            </p>
+            <p>
+                Each visualizer within the app is designed to offer a different lens through which to see your sound.
+                Some respond to rhythm, others to pitch, tone, or texture — no two are quite the same.
+                The result is a growing collection of audio-reactive artworks, each one giving a unique perspective on how
+                sound can look.
+            </p>
+            <p>
+                There's nothing to install — just open it in your browser and start experimenting.
+                And because the platform is built to be expandable, new visualizers can be added over time,
+                keeping the creative possibilities wide open.
+
+            </p>
+        </div>
+
+        <!-- Image Section on right side -->
+        <div class="flex-shrink-0" style="max-width: 400px; width: 100%;">
+            <canvas id="pictureCanvas" class="w-100" style="aspect-ratio: 4/4; border: 1px solid #ccc;"></canvas>
+        </div>
+    </div>
+
+    <!-- Load and render image javascript-->
+    <script>
+        const canvas = document.getElementById("pictureCanvas");
+        const ctx = canvas.getContext("2d");
+
+        function resizeCanvas() {
+            const container = canvas.parentElement;
+            const width = container.clientWidth;
+            const height = 500;
+            canvas.width = width;
+            canvas.height = height;
+
+            if (img.complete) {
+                ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+            }
+        }
+
+        const img = new Image();
+        img.src = "{% static 'images/aboutPic2.png' %}";
+        img.onload = resizeCanvas;
+        window.addEventListener('resize', resizeCanvas);
+    </script>
+
+</div>
+{% endblock %}

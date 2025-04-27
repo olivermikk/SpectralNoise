@@ -1,0 +1,154 @@
+/* General Layout with Sticky Footer Fix */
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    font-family: 'Helvetica Neue','Arial', sans-serif;
+    background-color: #FBFEF9; /* New background color */
+    color: #333;
+}
+
+main {
+    flex: 1; /* This makes sure the main content takes up all available space */
+}
+
+/* Content wrapper ensures footer stays at bottom */
+.content-wrapper {
+    flex: 1;
+    padding-bottom: 20px;
+    overflow: hidden;
+}
+
+/* Navbar */
+.navbar {
+    background: linear-gradient(180deg, #211A1E, #63A088);
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* Navbar links */
+.navbar a, .navbar-brand, .navbar-nav .nav-link {
+    color: #FBFEF9 !important;
+}
+
+.navbar a:hover, .navbar-nav .nav-link:hover {
+    color: #FFFFFF !important;
+    text-decoration: underline;
+}
+
+/* Footer */
+footer {
+    background: linear-gradient(180deg, #63A088, #211A1E); /* Gradient for navbar */
+    padding: 10px;
+    text-align: center;
+    font-size: 14px;
+    border-top: 1px solid #63A088; /* Border color update */
+    color: #FBFEF9; /* Text color change */
+}
+
+
+/* Centered Landing Page Content */
+.landing-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 80vh;
+}
+
+.landing-container h1 {
+    font-size: 2.5rem;
+    font-weight: bold;
+    color: #211A1E; /* Color update */
+}
+
+.landing-container p {
+    font-size: 1.2rem;
+    margin-bottom: 20px;
+    color: #333;
+}
+
+/* Buttons */
+.btn-primary {
+    background-color: #63A088; /* Button color update */
+    border-color: #63A088;
+    color: #FBFEF9;
+    padding: 10px 20px;
+    font-size: 1.2rem;
+    border-radius: 8px;
+    transition: background-color 0.2s ease;
+}
+
+.btn-primary:hover {
+    background-color: #527d6f;
+    border-color: #527d6f;
+    color: #FBFEF9;
+}
+
+/* Visualizer Page */
+.visualizer-container {
+    text-align: center;
+    padding: 50px;
+}
+
+.visualizer-container h1 {
+    font-size: 2rem;
+    margin-bottom: 20px;
+    color: #211A1E; /* Updated color */
+}
+
+/* Fullscreen Canvas Handling */
+#visualCanvasContainer {
+    position: relative;
+    width: 100%;
+    max-height: 650px;
+    height: auto;
+    background-color: #f4f4f4;
+    overflow: hidden;
+}
+
+#visualCanvas {
+    width: 100%;
+    height: 100%;
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    display: block;
+    background-color: #ffffff;
+}
+
+#visualCanvas:fullscreen {
+    width: 100vw !important;
+    height: 100vh !important;
+    max-width: 100vw;
+    max-height: 100vh;
+}
+
+/* The container for the audio canvas */
+#canvas {
+    position: relative;
+    width: 100%;
+    max-height: 650px;
+    background-color: #f4f4f4;
+    overflow: hidden;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    .landing-container h1 {
+        font-size: 2rem;
+    }
+
+    .landing-container p {
+        font-size: 1rem;
+    }
+
+    #visualCanvasContainer, #canvas {
+        max-height: 450px;
+    }
+}
